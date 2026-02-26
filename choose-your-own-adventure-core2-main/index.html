@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Choose Your Own Adventure</title>
+   <link rel="stylesheet" href="style.css">
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Akaya+Kanadaka&family=Amarante&family=Cormorant+Infant:ital,wght@0,300..700;1,300..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Eater&family=Encode+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Grand+Hotel&family=Inconsolata:wght@200..900&family=Rubik+Microbe&family=Space+Grotesk:wght@300..700&family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+   
+  
+</head>
+<body>
+
+  <div id="story-box">
+    <p id="scene-text"></p>
+    <div id="choices"></div>
+    <button id="restart-btn" onclick="goToScene('start')">↩ Start over</button>
+  </div>
+
+
+  <script>
+
+    // ─────────────────────────────────────────
+    // THE STORY — each scene has:
+    //   text:    what the reader sees
+    //   choices: an array of buttons
+    //            each choice has a "label" and a "next" scene key
+    // ─────────────────────────────────────────
+
+    let story = {
+
+      start: {
+        text: "You wake up in a forest. It is quiet except for the wind. Two paths stretch out before you.",
+        choices: [
+          { label: "Take the path going left, toward a cobblestone road.", next: "river" },
+          { label: "Take the path going right, near the sound of chirping birds.",      next: "dark-forest" }
+        ]
+      },
+
+      river: {
+        text: "You find a dimly-lit main street. There is a lively tea house and aquiet pub.",
+        choices: [
+          { label: "Go to the teahouse.",        next: "house" },
+          { label: "Go into the pub.",   next: "village" }
+        ]
+      },
+
+      "dark-forest": {
+        text: "You come across a dark and long cave.",
+        choices: [
+          { label: "Crawl into the cave.",          next: "door" },
+          { label: "Run back the way you came.",      next: "start" }
+        ]
+      },
+
+      house: {
+        text: "The tea house is crowded and jolly. Upon your arrival, customers act as if they know you and the server begins to offer you a menu.'",
+        choices: [
+          { label: "Take the menu.",  next: "end-map" },
+          { label: "Ask who these people are.",  next: "end-key" }
+        ]
+      },
+
+      village: {
+        text: "You reach the pub. Only 3 people are visible, and everyone stops and stares. They are serving only one drink, a mysterious liquid you have never seen.'",
+        choices: [
+          { label: "Order the drink.",    next: "end-village" },
+          { label: "Turn around and leave.",     next: "start" }
+        ]
+      },
+
+      door: {
+        text: "You reach the end of the cave and find an exit with bright sunlight and laughter.",
+        choices: [
+          { label: "Go through the exit to reveal more.",  next: "end-door" }
+        ]
+      },
+
+      // ── ENDINGS ──
+
+      "end-map": {
+        text: "You take a look at the piece of paper, only to realize it is completely blank. Looking around, everyone is gone and everything has faded away until you are left in darkness.",
+        choices: [],
+        ending: true
+      },
+
+      "end-key": {
+        text: "We are your relatives. We have been watching and waiting for you to arrive!",
+        choices: [],
+        ending: true
+      },
+
+      "end-village": {
+        text: "You begin to have visions of yourself in the future, and ones of the past, showing memories once forgotten. Until now.",
+        choices: [],
+        ending: true
+      },
+
+      "end-door": {
+        text: "You are welcomed to the sight of paradise. There is everything you could imagine---water to swim in, food to feast on. You look over the water, and see someone else in the reflection. It is not you. You touch the water and paradise fades away. ",
+        choices: [],
+        ending: true
+      }
+
+    };
+
+    // ─────────────────────────────────────────
+    // ENGINE — this reads the story object
+    // and builds the page for any scene
+    // ─────────────────────────────────────────
+
+    function goToScene(sceneKey) {
+
+      // Step 1: Look up the current scene using its key
+      let scene = story[sceneKey];
+
+      // Step 2: Show the scene text
+      document.getElementById("scene-text").textContent = scene.text;
+
+      // Step 3: Clear old buttons
+      let choicesBox = document.getElementById("choices");
+      choicesBox.innerHTML = "";
+
+      // Step 4: Create a button for each choice
+      for (let i = 0; i < scene.choices.length; i++) {
+
+        let choice = scene.choices[i]; // grab one choice
+
+        let btn = document.createElement("button"); // make a button
+        btn.textContent = choice.label;             // label it
+
+        // When clicked, go to the next scene
+        btn.onclick = function() {
+          goToScene(choice.next);
+        };
+
+        choicesBox.appendChild(btn); // add it to the page
+      }
+
+      // Step 5: If this is an ending, show the restart button
+      if (scene.ending) {
+        document.getElementById("restart-btn").style.display = "block";
+      } else {
+        document.getElementById("restart-btn").style.display = "none";
+      }
+
+    }
+
+    // Start the story on page load
+    goToScene("start");
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Choose Your Own Adventure</title>
+   <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+
+  <div id="story-box">
+    <p id="scene-text"></p>
+    <div id="choices"></div>
+    <button id="restart-btn" onclick="goToScene('start')">↩ Start over</button>
+  </div>
+
+  <script>
+
+    // ─────────────────────────────────────────
+    // THE STORY — each scene has:
+    //   text:    what the reader sees
+    //   choices: an array of buttons
+    //            each choice has a "label" and a "next" scene key
+    // ─────────────────────────────────────────
+
+    let story = {
+
+      start: {
+        text: "You wake up in a forest. It is quiet except for the wind. Two paths stretch out before you.",
+        choices: [
+          { label: "Take the path going left, towards, what looks like a cobblestone road.", next: "road" },
+          { label: "Take the path going right, where you hear chirping birds.",      next: "birds" }
+        ]
+      },
+
+      road: {
+        text: "You find a lit cobblestone pathway. There is a tea house and a quiet, dark pub.",
+        choices: [
+          { label: "Go into the tea house.",        next: "house" },
+          { label: "Approach the pub.",   next: "village" }
+        ]
+      },
+
+      birds: {
+        text: "The trees grow thick. The sound of more animals grows louder. Then you see a cave-like structure.",
+        choices: [
+          { label: "Walk into the cave.",          next: "cave" },
+          { label: "Turn around.",      next: "start" }
+        ]
+      },
+
+      house: {
+        text: "You step inside. A fire is burning. On the table: a cup of tea that seems to be shimmering and another glass that seems to have unknown floral floating on top.'",
+        choices: [
+          { label: "Take the shimmering liquid.",  next: "end-map" },
+          { label: "Take the floral liquid.",  next: "end-key" }
+        ]
+      },
+
+      village: {
+        text: "You enter the pub. Only the bartender and a few patrons are inside. They seem to be serving mysterious liquid, which all customers are drinking.'",
+        choices: [
+          { label: "Order the drink.",    next: "end-village" },
+          { label: "Turn around and leave.",     next: "start" }
+        ]
+      },
+
+      cave: {
+        text: "You crawl into the cave and the sound of any life is no longer apparent. You find a map to the right, and on the left, an exit leading ot bright sunlight.",
+        choices: [
+          { label: "pick up the map.", 
+           next: "end-door" }
+           {label: "Exit.", 
+           next:"end-exit"}
+        ]
+      },
+
+      // ── ENDINGS ──
+
+      "end-map": {
+        text: "The map shows a place you recognize. You have been there in your dreams. You fold it carefully and step back outside. The adventure is just beginning.",
+        choices: [],
+        ending: true
+      },
+
+      "end-key": {
+        text: "The key is heavier than it looks. You don't know what it opens yet. But you carry it with you — and somehow that is enough.",
+        choices: [],
+        ending: true
+      },
+
+      "end-village": {
+        text: "The bartender serves you. You take a sip and begin to see visions of yourself, both in the the future and in memories once forgotten until now.",
+        choices: [],
+        ending: true
+      },
+
+      "end-door": {
+        text: "Your reflection in the mirror is smiling. But you are not smiling. You reach out and touch the glass. It is warm.",
+        choices: [],
+        ending: true
+      }
+
+      "end-exit": {
+        
+      }
+
+    };
+
+    // ─────────────────────────────────────────
+    // ENGINE — this reads the story object
+    // and builds the page for any scene
+    // ─────────────────────────────────────────
+
+    function goToScene(sceneKey) {
+
+      // Step 1: Look up the current scene using its key
+      let scene = story[sceneKey];
+
+      // Step 2: Show the scene text
+      document.getElementById("scene-text").textContent = scene.text;
+
+      // Step 3: Clear old buttons
+      let choicesBox = document.getElementById("choices");
+      choicesBox.innerHTML = "";
+
+      // Step 4: Create a button for each choice
+      for (let i = 0; i < scene.choices.length; i++) {
+
+        let choice = scene.choices[i]; // grab one choice
+
+        let btn = document.createElement("button"); // make a button
+        btn.textContent = choice.label;             // label it
+
+        // When clicked, go to the next scene
+        btn.onclick = function() {
+          goToScene(choice.next);
+        };
+
+        choicesBox.appendChild(btn); // add it to the page
+      }
+
+      // Step 5: If this is an ending, show the restart button
+      if (scene.ending) {
+        document.getElementById("restart-btn").style.display = "block";
+      } else {
+        document.getElementById("restart-btn").style.display = "none";
+      }
+
+    }
+
+    // Start the story on page load
+    goToScene("start");
+
+  </script>
+
+</body>
+</html>
